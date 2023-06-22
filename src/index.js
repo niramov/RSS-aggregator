@@ -9,14 +9,13 @@ console.log('You are doing everything, right! Go on!!!');
 const f = () => {
   const state = {
     url: '',
-    valid: '',
+    valid: null,
     feeds: [],
   };
 
   const watchedState = onChange(state, render);
 
   const form = document.querySelector('.rss-form');
-  // const inputField = form.querySelector('#url-input');
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -32,11 +31,13 @@ const f = () => {
       .then((validData) => {
         watchedState.valid = true;
         console.log('Валидация прошла успешно', validData);
+        watchedState.feeds.push(value);
       })
       .catch((e) => {
         console.log('validationError', e);
         watchedState.valid = false;
       });
+    console.log('watched!!!', watchedState);
   });
 };
 

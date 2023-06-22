@@ -28,13 +28,17 @@ const config = {
         test: /\.css$/i,
         use: [stylesHandler, 'css-loader'],
       },
-      // {
-      //   test: /\.scss$/,
-      //   use: ['style-loader', 'css-loader', 'sass-loader', 'postcss-loader'],
-      // },
+      {
+        test: /\.scss$/,
+        use: ['style-loader', 'css-loader', 'sass-loader', 'postcss-loader'],
+      },
       {
         test: /\.(eot|svg|ttf|woff|woff2|png|jpg|gif)$/i,
         type: 'asset',
+      },
+      {
+        test: /\.(sass|less|css)$/,
+        use: ['style-loader', 'css-loader', 'less-loader'],
       },
 
       // Add your rules for custom modules here
