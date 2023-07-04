@@ -1,6 +1,8 @@
 export default {
   lng: 'ru',
   valid: null,
-  feeds: [],
   urlErrors: [],
+  urls: [],
+  feeds: [],
+  posts: [],
 };
