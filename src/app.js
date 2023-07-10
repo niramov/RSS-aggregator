@@ -66,25 +66,9 @@ export default (state) => {
           const { feed, posts } = data;
           watchedState.feeds.unshift(feed);
           watchedState.posts.push(...posts);
-          // return Promise.resolve();
+          return Promise.resolve();
         }
-        throw new Error('NetworkError');
-      })
-      .then(() => {
-        const postContainer = document.querySelectorAll('[data-el="posts"]');
-        console.log('postContainer', postContainer);
-        postContainer.forEach((post) =>
-          post.addEventListener('click', (e) => {
-            console.log('e.target', e.target);
-            const targetButton = e.target.closest('.btn-outline-primary');
-            console.log('targetButton', targetButton);
-            if (targetButton) {
-              const targetId = targetButton.dataset.postId;
-              watchedState.stateUI.readedPosts.push(targetId);
-              watchedState.stateUI.modal = targetId;
-            }
-          })
-        );
+        throw new Error('Network Error');
       })
       .catch((e) => {
         console.log('e.message!!!!', e);
@@ -92,5 +76,26 @@ export default (state) => {
         watchedState.valid = false;
       });
   });
+
+  const postContainer = document.querySelector('.posts');
+  console.log('postContainer', postContainer);
+  postContainer.addEventListener('click', (e) => {
+    console.log('e.target', e.target);
+    if (e.target.dataset.postId) {
+      console.log('e.target.dataset', e.target.dataset.postId);
+      const targetId = e.target.dataset.postId;
+      watchedState.stateUI.readedPosts.push(targetId);
+      watchedState.stateUI.modal = targetId;
+    }
+
+    // const targetButton = e.target.closest('.btn-outline-primary');
+    // console.log('targetButton', targetButton);
+    // if (targetButton) {
+    //   const targetId = targetButton.dataset.postId;
+    //   watchedState.stateUI.readedPosts.push(targetId);
+    //   watchedState.stateUI.modal = targetId;
+    // }
+  });
+
   updatePosts(watchedState);
 };

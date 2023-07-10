@@ -67,7 +67,6 @@ const render = (watchedState) => (path, value) => {
   }
 
   if (path === 'posts') {
-    // console.log('value posts in view', value);
     const listContainer = document.querySelector(`.${path}`);
     listContainer.innerHTML = '';
     listContainer.append(createListElement(path));
@@ -84,9 +83,10 @@ const render = (watchedState) => (path, value) => {
         'align-items-start'
       );
 
+      const fw = watchedState.stateUI.readedPosts.includes(post.postId) ? 'fw-normal' : 'fw-bold';
       const a = document.createElement('a');
       a.setAttribute('href', post.link);
-      a.classList.add('fw-bold');
+      a.classList.add(fw);
       a.dataset.postId = post.postId;
       a.setAttribute('target', '_blank');
       a.setAttribute('rel', 'noopener noreferrer');
@@ -113,7 +113,7 @@ const render = (watchedState) => (path, value) => {
         feedBack.textContent = i18next.t('errors.parserError');
         break;
       case 'Network Error':
-        feedBack.textContent = i18next.t('erros.networkError');
+        feedBack.textContent = i18next.t('errors.networkError');
         break;
       case 'notValidUrl':
         feedBack.textContent = i18next.t('errors.notValidUrl');
@@ -127,10 +127,7 @@ const render = (watchedState) => (path, value) => {
   }
 
   if (path === 'stateUI.readedPosts') {
-    console.log('VALUE!!!!', value);
     value.forEach((targetId) => {
-      console.log('targetId', targetId);
-      console.log('watchedState.posts', watchedState.posts);
       const targetPost = watchedState.posts.find(({ postId }) => postId === targetId);
       console.log('targetPost', targetPost);
       const element = document.querySelector(`[data-post-id="${targetId}"]`);
@@ -138,6 +135,16 @@ const render = (watchedState) => (path, value) => {
       element.classList.remove('fw-bold');
       element.classList.add('fw-normal');
     });
+  }
+
+  if (path === 'stateUI.modal') {
+    const modalTitle = document.querySelector('.modal-title');
+    const modalBody = document.querySelector('.modal-body');
+    const modalLink = document.querySelector('.modal-footer > a');
+    const targetPost = watchedState.posts.find(({ postId }) => postId === value);
+    modalTitle.textContent = targetPost.title;
+    modalBody.textContent = targetPost.description;
+    modalLink.href = targetPost.link;
   }
 };
 

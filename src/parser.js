@@ -10,8 +10,6 @@ export default (object) => {
     throw e;
   }
 
-  console.log('NO PARSEERRORS!!!!!!');
-
   const feedTitle = data.querySelector('title').textContent;
   const feedDescription = data.querySelector('description').textContent;
   const feed = { title: feedTitle, description: feedDescription, id: _.uniqueId() };
