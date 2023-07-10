@@ -22,27 +22,17 @@ const createListElement = (listName) => {
   return borderDiv;
 };
 
-// const createFeed = (feed) => {
-//   const listContainer = document.querySelector(`.${path}`);
-//   if (listContainer.childNodes.length === 0) {
-//     createListElement()
-//   }
-// }
-
-const render = (path, value) => {
+const render = (watchedState) => (path, value) => {
   i18next.init({ lng: 'ru', debug: false, resources: { ru } });
 
   const inputField = document.getElementById('url-input');
-
   const feedBack = document.querySelector('p.feedback');
-  console.log('feedback', feedBack);
 
   if (path === 'valid') {
     if (value === true) {
       inputField.classList.remove('error');
       feedBack.classList.remove('text-danger');
       feedBack.classList.add('text-success');
-      // feedBack.textContent = i18next.t('succeedMessage');
       inputField.value = '';
       inputField.focus();
     }
@@ -54,7 +44,7 @@ const render = (path, value) => {
   }
 
   if (path === 'feeds') {
-    console.log('value', value);
+    // console.log('value feeds in view', value);
     const listContainer = document.querySelector(`.${path}`);
     if (listContainer.childNodes.length === 0) {
       listContainer.append(createListElement(path));
@@ -77,13 +67,12 @@ const render = (path, value) => {
   }
 
   if (path === 'posts') {
-    console.log('valuePosts', value);
+    // console.log('value posts in view', value);
     const listContainer = document.querySelector(`.${path}`);
-    if (listContainer.childNodes.length === 0) {
-      listContainer.append(createListElement(path));
-    }
+    listContainer.innerHTML = '';
+    listContainer.append(createListElement(path));
 
-    value[0].forEach((post) => {
+    value.forEach((post) => {
       const list = listContainer.querySelector('[data-el]');
       const el = document.createElement('li');
       el.classList.add(
@@ -98,7 +87,7 @@ const render = (path, value) => {
       const a = document.createElement('a');
       a.setAttribute('href', post.link);
       a.classList.add('fw-bold');
-      a.dataset.id = 1;
+      a.dataset.postId = post.postId;
       a.setAttribute('target', '_blank');
       a.setAttribute('rel', 'noopener noreferrer');
       a.textContent = post.title;
@@ -106,7 +95,7 @@ const render = (path, value) => {
       const button = document.createElement('button');
       button.classList.add('btn', 'btn-outline-primary', 'btn-sm');
       button.classList.add('type', 'button');
-      button.dataset.id = 1;
+      button.dataset.postId = post.postId;
       button.dataset.bsToggle = 'modal';
       button.dataset.bsTarget = '#modal';
       button.textContent = 'Просмотр';
@@ -117,11 +106,38 @@ const render = (path, value) => {
     feedBack.textContent = i18next.t('succeedMessage');
   }
 
-  if (path === 'urlErrors') {
-    const feedbackText = value.includes('url must be a valid')
-      ? i18next.t('errors.notValidUrl')
-      : i18next.t('errors.existsAllready');
-    feedBack.textContent = feedbackText;
+  if (path === 'errors') {
+    feedBack.textContent = '';
+    switch (value) {
+      case 'ParserError':
+        feedBack.textContent = i18next.t('errors.parserError');
+        break;
+      case 'Network Error':
+        feedBack.textContent = i18next.t('erros.networkError');
+        break;
+      case 'notValidUrl':
+        feedBack.textContent = i18next.t('errors.notValidUrl');
+        break;
+      case 'existsAllready':
+        feedBack.textContent = i18next.t('errors.existsAllready');
+        break;
+      default:
+        throw new Error('Unknown value!', value);
+    }
+  }
+
+  if (path === 'stateUI.readedPosts') {
+    console.log('VALUE!!!!', value);
+    value.forEach((targetId) => {
+      console.log('targetId', targetId);
+      console.log('watchedState.posts', watchedState.posts);
+      const targetPost = watchedState.posts.find(({ postId }) => postId === targetId);
+      console.log('targetPost', targetPost);
+      const element = document.querySelector(`[data-post-id="${targetId}"]`);
+      console.log('element', element);
+      element.classList.remove('fw-bold');
+      element.classList.add('fw-normal');
+    });
   }
 };
 

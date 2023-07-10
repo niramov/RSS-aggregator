@@ -1,7 +1,11 @@
 export default {
   lng: 'ru',
+  stateUI: {
+    readedPosts: [],
+    modal: null,
+  },
   valid: null,
-  urlErrors: [],
+  errors: '',
   urls: [],
   feeds: [],
   posts: [],

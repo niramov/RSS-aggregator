@@ -5,8 +5,16 @@ import onChange from 'on-change';
 import { render } from './view.js';
 import axios from 'axios';
 import parse from './parser.js';
+import _ from 'lodash';
 
-console.log('You are doing everything, right! Go on!!!');
+yup.setLocale({
+  mixed: {
+    notOneOf: 'existsAllready',
+  },
+  string: {
+    url: 'notValidUrl',
+  },
+});
 
 const makeRequest = (url) => {
   const link = `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`;
@@ -14,47 +22,75 @@ const makeRequest = (url) => {
 };
 
 export default (state) => {
-  const watchedState = onChange(state, render);
+  const watchedState = onChange(state, render(state));
 
   const form = document.querySelector('.rss-form');
+
+  const updatePosts = (watchedState) => {
+    watchedState.urls.forEach((url) => {
+      makeRequest(url)
+        .then((responce) => {
+          const { posts } = parse(responce.data.contents);
+          const postsLinks = watchedState.posts.map((post) => post.link);
+          const newPosts = posts.filter(({ link }) => !postsLinks.includes(link));
+          watchedState.posts.push(...newPosts);
+          render(watchedState);
+        })
+        .catch((error) => {
+          watchedState.errors = error.message;
+        });
+    });
+    setTimeout(() => updatePosts(watchedState), 5000);
+  };
 
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const url = formData.get('url').trim();
-    console.log('url', url);
     const schema = yup.object().shape({
       url: yup.string().url().notOneOf(watchedState.urls),
     });
 
     schema
       .validate({ url })
-      .then((validData) => {
+      .then(() => {
         watchedState.valid = true;
-        console.log('Валидация прошла успешно', validData);
-        watchedState.urls.push(url);
-        watchedState.valid = null;
       })
-      .then(() => makeRequest(url))
-      .then((responce) => {
-        console.log('responce', responce);
-        if (responce.status >= 200 && responce.status < 300) {
-          const data = parse(responce.data.contents);
+      .then(() => {
+        watchedState.urls.push(url);
+        return makeRequest(url);
+      })
+      .then((response) => {
+        if (response.status >= 200 && response.status < 300) {
+          const data = parse(response.data.contents);
           const { feed, posts } = data;
-          console.log('posts', posts);
           watchedState.feeds.unshift(feed);
-          console.log('watchedState.feeds', watchedState.feeds);
-          watchedState.posts.unshift(posts);
-          console.log('watchedState.posts', watchedState.posts);
-          return;
+          watchedState.posts.push(...posts);
+          // return Promise.resolve();
         }
-        throw new Error('networkError');
+        throw new Error('NetworkError');
+      })
+      .then(() => {
+        const postContainer = document.querySelectorAll('[data-el="posts"]');
+        console.log('postContainer', postContainer);
+        postContainer.forEach((post) =>
+          post.addEventListener('click', (e) => {
+            console.log('e.target', e.target);
+            const targetButton = e.target.closest('.btn-outline-primary');
+            console.log('targetButton', targetButton);
+            if (targetButton) {
+              const targetId = targetButton.dataset.postId;
+              watchedState.stateUI.readedPosts.push(targetId);
+              watchedState.stateUI.modal = targetId;
+            }
+          })
+        );
       })
       .catch((e) => {
-        console.log('e', e);
-        console.log('e.name!!!!', e.name === 'ValidationError');
-        watchedState.urlErrors = e.message;
+        console.log('e.message!!!!', e);
+        watchedState.errors = e.message;
         watchedState.valid = false;
       });
   });
+  updatePosts(watchedState);
 };
