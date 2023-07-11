@@ -1,6 +1,3 @@
-import i18next from 'i18next';
-import ru from './text/ru';
-
 const createListElement = (listName) => {
   const borderDiv = document.createElement('div');
   borderDiv.classList.add('card', 'border-0');
@@ -22,9 +19,7 @@ const createListElement = (listName) => {
   return borderDiv;
 };
 
-const render = (watchedState) => (path, value) => {
-  i18next.init({ lng: 'ru', debug: false, resources: { ru } });
-
+const render = (watchedState, i18n) => (path, value) => {
   const inputField = document.getElementById('url-input');
   const feedBack = document.querySelector('p.feedback');
 
@@ -44,7 +39,6 @@ const render = (watchedState) => (path, value) => {
   }
 
   if (path === 'feeds') {
-    // console.log('value feeds in view', value);
     const listContainer = document.querySelector(`.${path}`);
     if (listContainer.childNodes.length === 0) {
       listContainer.append(createListElement(path));
@@ -103,23 +97,23 @@ const render = (watchedState) => (path, value) => {
       el.append(a, button);
       list.append(el);
     });
-    feedBack.textContent = i18next.t('succeedMessage');
+    feedBack.textContent = i18n.t('succeedMessage');
   }
 
   if (path === 'errors') {
     feedBack.textContent = '';
     switch (value) {
       case 'ParserError':
-        feedBack.textContent = i18next.t('errors.parserError');
+        feedBack.textContent = i18n.t('errors.parserError');
         break;
       case 'Network Error':
-        feedBack.textContent = i18next.t('errors.networkError');
+        feedBack.textContent = i18n.t('errors.networkError');
         break;
       case 'notValidUrl':
-        feedBack.textContent = i18next.t('errors.notValidUrl');
+        feedBack.textContent = i18n.t('errors.notValidUrl');
         break;
       case 'existsAllready':
-        feedBack.textContent = i18next.t('errors.existsAllready');
+        feedBack.textContent = i18n.t('errors.existsAllready');
         break;
       default:
         throw new Error('Unknown value!', value);

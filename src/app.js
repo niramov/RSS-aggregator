@@ -5,10 +5,13 @@ import onChange from 'on-change';
 import { render } from './view.js';
 import axios from 'axios';
 import parse from './parser.js';
+import i18next from 'i18next';
+import ru from './text/ru';
 
 yup.setLocale({
   mixed: {
     notOneOf: 'existsAllready',
+    requried: 'emptyInput',
   },
   string: {
     url: 'notValidUrl',
@@ -21,13 +24,16 @@ const makeRequest = (url) => {
 };
 
 export default (state) => {
-  const watchedState = onChange(state, render(state));
+  const i18n = i18next.createInstance();
+  i18n.init({ lng: 'ru', debug: false, resources: { ru } });
+
+  const watchedState = onChange(state, render(state, i18n));
 
   const form = document.querySelector('.rss-form');
 
   const updatePosts = (watchedState) => {
     watchedState.urls.forEach((url) => {
-      makeRequest(url)
+      return makeRequest(url)
         .then((responce) => {
           const { posts } = parse(responce.data.contents);
           const postsLinks = watchedState.posts.map((post) => post.link);
@@ -36,7 +42,7 @@ export default (state) => {
           render(watchedState);
         })
         .catch((error) => {
-          watchedState.errors = error.message;
+          console.log(error);
         });
     });
     setTimeout(() => updatePosts(watchedState), 5000);
@@ -45,22 +51,23 @@ export default (state) => {
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
-    const url = formData.get('url').trim();
+    const url = formData.get('url');
     const schema = yup.object().shape({
-      url: yup.string().url().notOneOf(watchedState.urls),
+      url: yup.string().required().url().trim().notOneOf(watchedState.urls),
     });
 
     schema
       .validate({ url })
       .then(() => {
+        watchedState.errors = '';
         watchedState.valid = true;
       })
       .then(() => {
-        watchedState.urls.push(url);
         return makeRequest(url);
       })
       .then((response) => {
         if (response.status >= 200 && response.status < 300) {
+          watchedState.urls.push(url);
           const data = parse(response.data.contents);
           const { feed, posts } = data;
           watchedState.feeds.unshift(feed);
