@@ -5,7 +5,6 @@ import onChange from 'on-change';
 import { render } from './view.js';
 import axios from 'axios';
 import parse from './parser.js';
-import _ from 'lodash';
 
 yup.setLocale({
   mixed: {
@@ -87,14 +86,6 @@ export default (state) => {
       watchedState.stateUI.readedPosts.push(targetId);
       watchedState.stateUI.modal = targetId;
     }
-
-    // const targetButton = e.target.closest('.btn-outline-primary');
-    // console.log('targetButton', targetButton);
-    // if (targetButton) {
-    //   const targetId = targetButton.dataset.postId;
-    //   watchedState.stateUI.readedPosts.push(targetId);
-    //   watchedState.stateUI.modal = targetId;
-    // }
   });
 
   updatePosts(watchedState);
