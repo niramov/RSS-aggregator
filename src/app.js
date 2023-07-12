@@ -1,11 +1,11 @@
 import './styles.scss';
 import 'bootstrap';
+import axios from 'axios';
 import * as yup from 'yup';
 import onChange from 'on-change';
-import { render } from './view.js';
-import axios from 'axios';
-import parse from './parser.js';
 import i18next from 'i18next';
+import render from './view.js';
+import parse from './parser.js';
 import ru from './text/ru';
 
 yup.setLocale({
@@ -31,20 +31,20 @@ export default (state) => {
 
   const form = document.querySelector('.rss-form');
 
-  const updatePosts = (watchedState) => {
-    watchedState.urls.forEach((url) => {
-      return makeRequest(url)
+  const updatePosts = (state) => {
+    state.urls.forEach((url) =>
+      makeRequest(url)
         .then((responce) => {
           const { posts } = parse(responce.data.contents);
-          const postsLinks = watchedState.posts.map((post) => post.link);
+          const postsLinks = state.posts.map((post) => post.link);
           const newPosts = posts.filter(({ link }) => !postsLinks.includes(link));
-          watchedState.posts.push(...newPosts);
-          render(watchedState);
+          state.posts.push(...newPosts);
+          // render(state);
         })
         .catch((error) => {
           console.log(error);
-        });
-    });
+        })
+    );
     setTimeout(() => updatePosts(watchedState), 5000);
   };
 
@@ -53,7 +53,7 @@ export default (state) => {
     const formData = new FormData(e.target);
     const url = formData.get('url');
     const schema = yup.object().shape({
-      url: yup.string().required().url().trim().notOneOf(watchedState.urls),
+      url: yup.string().url().trim().notOneOf(watchedState.urls),
     });
 
     schema
@@ -62,9 +62,7 @@ export default (state) => {
         watchedState.errors = '';
         watchedState.valid = true;
       })
-      .then(() => {
-        return makeRequest(url);
-      })
+      .then(() => makeRequest(url))
       .then((response) => {
         if (response.status >= 200 && response.status < 300) {
           watchedState.urls.push(url);
@@ -76,9 +74,9 @@ export default (state) => {
         }
         throw new Error('Network Error');
       })
-      .catch((e) => {
-        console.log('e.message!!!!', e);
-        watchedState.errors = e.message;
+      .catch((error) => {
+        console.log('e.message!!!!', error);
+        watchedState.errors = error.message;
         watchedState.valid = false;
       });
   });

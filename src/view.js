@@ -19,7 +19,7 @@ const createListElement = (listName) => {
   return borderDiv;
 };
 
-const render = (watchedState, i18n) => (path, value) => {
+export default (watchedState, i18n) => (path, value) => {
   const inputField = document.getElementById('url-input');
   const feedBack = document.querySelector('p.feedback');
 
@@ -141,5 +141,3 @@ const render = (watchedState, i18n) => (path, value) => {
     modalLink.href = targetPost.link;
   }
 };
-
-export { render };
