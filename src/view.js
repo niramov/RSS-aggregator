@@ -42,7 +42,7 @@ const renderForm = (elements, value, i18n) => {
     default:
       console.log('Unknown value!!!', value);
   }
-}
+};
 
 const renderFeeds = (elements, value) => {
   if (elements.feedsContainer.childNodes.length === 0) {
@@ -63,7 +63,7 @@ const renderFeeds = (elements, value) => {
 
   el.append(head, description);
   list.append(el);
-}
+};
 
 const renderPosts = (watchedState, value, elements) => {
   elements.postsContainer.innerHTML = '';
@@ -78,7 +78,7 @@ const renderPosts = (watchedState, value, elements) => {
       'border-0',
       'justify-content-between',
       'border-end-0',
-      'align-items-start'
+      'align-items-start',
     );
 
     const fw = watchedState.stateUI.readedPosts.includes(post.postId) ? 'fw-normal' : 'fw-bold';
@@ -101,7 +101,7 @@ const renderPosts = (watchedState, value, elements) => {
     el.append(a, button);
     list.append(el);
   });
-}
+};
 
 const renderErrors = (elements, value, i18n) => {
   elements.feedBack.textContent = '';
@@ -138,12 +138,12 @@ const renderReadedPosts = (watchedState, value) => {
 
 const renderModal = (watchedState, value, elements) => {
   const modalTitle = elements.modal.querySelector('.modal-title');
-    const modalBody = elements.modal.querySelector('.modal-body');
-    const modalLink = elements.modal.querySelector('.modal-footer > a');
-    const targetPost = watchedState.posts.find(({ postId }) => postId === value);
-    modalTitle.textContent = targetPost.title;
-    modalBody.textContent = targetPost.description;
-    modalLink.href = targetPost.link;
+  const modalBody = elements.modal.querySelector('.modal-body');
+  const modalLink = elements.modal.querySelector('.modal-footer > a');
+  const targetPost = watchedState.posts.find(({ postId }) => postId === value);
+  modalTitle.textContent = targetPost.title;
+  modalBody.textContent = targetPost.description;
+  modalLink.href = targetPost.link;
 };
 
 export default (watchedState, elements, i18n) => (path, value) => {

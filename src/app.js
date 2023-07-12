@@ -36,9 +36,9 @@ const updatePosts = (changedState) => {
       changedState.posts.push(...newPosts);
     });
   })
-  .catch((error) => {
-    console.log(error);
-  });
+    .catch((error) => {
+      console.log(error);
+    });
   setTimeout(() => updatePosts(changedState), 5000);
 };
 
@@ -78,7 +78,7 @@ export default (state) => {
             watchedState.posts.push(...posts);
             watchedState.formState = 'successed';
             return;
-         }
+          }
           throw new Error('Network Error');
         })
         .catch((error) => {
@@ -97,5 +97,5 @@ export default (state) => {
       }
     });
     updatePosts(watchedState);
-  })
+  });
 };
