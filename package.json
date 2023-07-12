@@ -1,7 +1,7 @@
 {
   "name": "@hexlet/code",
   "version": "1.0.0",
-  "description": "[![Actions Status](https://github.com/niramov/frontend-project-11/workflows/hexlet-check/badge.svg)](https://github.com/niramov/frontend-project-11/actions)",
+  "description": "RSS aggregator with automatically posts updating",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

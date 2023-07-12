@@ -5,7 +5,7 @@ export default {
     modal: null,
   },
   valid: null,
-  errors: '',
+  error: '',
   urls: [],
   feeds: [],
   posts: [],

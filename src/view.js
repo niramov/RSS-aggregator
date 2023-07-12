@@ -74,7 +74,7 @@ export default (watchedState, i18n) => (path, value) => {
         'border-0',
         'justify-content-between',
         'border-end-0',
-        'align-items-start',
+        'align-items-start'
       );
 
       const fw = watchedState.stateUI.readedPosts.includes(post.postId) ? 'fw-normal' : 'fw-bold';
@@ -100,7 +100,7 @@ export default (watchedState, i18n) => (path, value) => {
     feedBack.textContent = i18n.t('succeedMessage');
   }
 
-  if (path === 'errors') {
+  if (path === 'error') {
     feedBack.textContent = '';
     switch (value) {
       case 'ParserError':
