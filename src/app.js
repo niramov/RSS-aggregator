@@ -42,10 +42,18 @@ const updatePosts = (changedState) => {
   setTimeout(() => updatePosts(changedState), 5000);
 };
 
+const elements = {
+  inputField: document.getElementById('url-input'),
+  feedBack: document.querySelector('p.feedback'),
+  feedsContainer: document.querySelector('.feeds'),
+  postsContainer: document.querySelector('.posts'),
+  modal: document.querySelector('.modal'),
+};
+
 export default (state) => {
   const i18n = i18next.createInstance();
   i18n.init({ lng: 'ru', debug: false, resources: { ru } }).then(() => {
-    const watchedState = onChange(state, render(state, i18n));
+    const watchedState = onChange(state, render(state, elements, i18n));
 
     const form = document.querySelector('.rss-form');
 
@@ -58,7 +66,7 @@ export default (state) => {
         .validate(url)
         .then(() => {
           watchedState.error = '';
-          watchedState.valid = true;
+          watchedState.formState = 'processing';
         })
         .then(() => makeRequest(url))
         .then((response) => {
@@ -68,6 +76,7 @@ export default (state) => {
             const { feed, posts } = data;
             watchedState.feeds.unshift(feed);
             watchedState.posts.push(...posts);
+            watchedState.formState = 'successed';
             return;
          }
           throw new Error('Network Error');
@@ -75,7 +84,7 @@ export default (state) => {
         .catch((error) => {
           console.log('e.message!!!!', error);
           watchedState.error = error.message;
-          watchedState.valid = false;
+          watchedState.formState = 'error';
         });
     });
 

@@ -4,7 +4,7 @@ export default {
     readedPosts: [],
     modal: null,
   },
-  valid: null,
+  formState: 'ready',
   error: '',
   urls: [],
   feeds: [],
