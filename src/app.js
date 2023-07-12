@@ -38,7 +38,6 @@ export default (state) => {
         const postsLinks = changedState.posts.map((post) => post.link);
         const newPosts = posts.filter(({ link }) => !postsLinks.includes(link));
         changedState.posts.push(...newPosts);
-      
       })
       .catch((error) => {
         console.log(error);
