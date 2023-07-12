@@ -74,7 +74,7 @@ export default (watchedState, i18n) => (path, value) => {
         'border-0',
         'justify-content-between',
         'border-end-0',
-        'align-items-start'
+        'align-items-start',
       );
 
       const fw = watchedState.stateUI.readedPosts.includes(post.postId) ? 'fw-normal' : 'fw-bold';

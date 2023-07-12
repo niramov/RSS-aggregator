@@ -31,20 +31,18 @@ export default (state) => {
 
   const form = document.querySelector('.rss-form');
 
-  const updatePosts = (state) => {
-    state.urls.forEach((url) =>
-      makeRequest(url)
-        .then((responce) => {
+  const updatePosts = (changedState) => {
+    changedState.urls.forEach((url) =>
+      makeRequest(url).then((responce) => {
           const { posts } = parse(responce.data.contents);
-          const postsLinks = state.posts.map((post) => post.link);
+          const postsLinks = changedState.posts.map((post) => post.link);
           const newPosts = posts.filter(({ link }) => !postsLinks.includes(link));
-          state.posts.push(...newPosts);
+          changedState.posts.push(...newPosts);
           // render(state);
         })
         .catch((error) => {
           console.log(error);
-        })
-    );
+        }));
     setTimeout(() => updatePosts(watchedState), 5000);
   };
 
