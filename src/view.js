@@ -41,7 +41,7 @@ const renderForm = (elements, value, i18n) => {
       break;
     default:
       console.log('Unknown value!!!', value);
-  };
+  }
 }
 
 const renderFeeds = (elements, value) => {
