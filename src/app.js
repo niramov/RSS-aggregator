@@ -27,10 +27,12 @@ const makeRequest = (url) => {
 
 const updatePosts = (changedState) => {
   const promises = changedState.urls.map((url) => makeRequest(url));
-  const promise = Promise.all(promises);
+  const promise = Promise.allSettled(promises);
   promise.then((responces) => {
-    responces.forEach((responce) => {
-      const { posts } = parse(responce.data.contents);
+    responces
+    .filter((responce) => responce.status === 'fulfilled')
+    .forEach((responce) => {
+      const { posts } = parse(responce.value.data.contents);
       const postsLinks = changedState.posts.map((post) => post.link);
       const newPosts = posts.filter(({ link }) => !postsLinks.includes(link));
       changedState.posts.push(...newPosts);
@@ -48,6 +50,8 @@ const elements = {
   feedsContainer: document.querySelector('.feeds'),
   postsContainer: document.querySelector('.posts'),
   modal: document.querySelector('.modal'),
+  form: document.querySelector('.rss-form'),
+  button: document.querySelector('.btn'),
 };
 
 export default (state) => {
@@ -55,18 +59,16 @@ export default (state) => {
   i18n.init({ lng: 'ru', debug: false, resources: { ru } }).then(() => {
     const watchedState = onChange(state, render(state, elements, i18n));
 
-    const form = document.querySelector('.rss-form');
-
-    form.addEventListener('submit', (e) => {
+    elements.form.addEventListener('submit', (e) => {
       e.preventDefault();
       const formData = new FormData(e.target);
       const url = formData.get('url');
+      watchedState.formState = 'processing';
 
       schema(watchedState.urls)
         .validate(url)
         .then(() => {
           watchedState.error = '';
-          watchedState.formState = 'processing';
         })
         .then(() => makeRequest(url))
         .then((response) => {
@@ -86,6 +88,7 @@ export default (state) => {
           watchedState.error = error.message;
           watchedState.formState = 'error';
         });
+        updatePosts(watchedState);
     });
 
     const postContainer = document.querySelector('.posts');
@@ -96,6 +99,5 @@ export default (state) => {
         watchedState.stateUI.modal = targetId;
       }
     });
-    updatePosts(watchedState);
   });
 };

@@ -22,6 +22,7 @@ const createListElement = (listName) => {
 const renderForm = (elements, value, i18n) => {
   switch (value) {
     case 'processing':
+      elements.button.setAttribute('disable', '');
       elements.inputField.classList.remove('error');
       elements.feedBack.classList.remove('text-danger');
       elements.feedBack.textContent = '';
@@ -31,6 +32,7 @@ const renderForm = (elements, value, i18n) => {
       elements.feedBack.classList.remove('text-danger');
       elements.feedBack.classList.add('text-success');
       elements.feedBack.textContent = i18n.t('succeedMessage');
+      elements.button.removeAttribute('disable');
       elements.inputField.value = '';
       elements.inputField.focus();
       break;
@@ -38,6 +40,7 @@ const renderForm = (elements, value, i18n) => {
       elements.inputField.classList.add('error');
       elements.feedBack.classList.remove('text-success');
       elements.feedBack.classList.add('text-danger');
+      elements.button.removeAttribute('disable');
       break;
     default:
       console.log('Unknown value!!!', value);
