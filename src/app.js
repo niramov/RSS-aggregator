@@ -30,13 +30,13 @@ const updatePosts = (changedState) => {
   const promise = Promise.allSettled(promises);
   promise.then((responces) => {
     responces
-    .filter((responce) => responce.status === 'fulfilled')
-    .forEach((responce) => {
-      const { posts } = parse(responce.value.data.contents);
-      const postsLinks = changedState.posts.map((post) => post.link);
-      const newPosts = posts.filter(({ link }) => !postsLinks.includes(link));
-      changedState.posts.push(...newPosts);
-    });
+      .filter((responce) => responce.status === 'fulfilled')
+      .forEach((responce) => {
+        const { posts } = parse(responce.value.data.contents);
+        const postsLinks = changedState.posts.map((post) => post.link);
+        const newPosts = posts.filter(({ link }) => !postsLinks.includes(link));
+        changedState.posts.push(...newPosts);
+      });
   })
     .catch((error) => {
       console.log(error);
@@ -88,7 +88,7 @@ export default (state) => {
           watchedState.error = error.message;
           watchedState.formState = 'error';
         });
-        updatePosts(watchedState);
+      updatePosts(watchedState);
     });
 
     const postContainer = document.querySelector('.posts');
