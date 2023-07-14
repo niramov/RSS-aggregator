@@ -27,7 +27,7 @@ const makeRequest = (text) => {
 };
 
 const updatePosts = (changedState) => {
-  const promises = changedState.urls.map((url) => makeRequest(url));
+  const promises = changedState.urls.map((url) => makeRequest(new URL(url)));
   const promise = Promise.allSettled(promises);
   promise.then((responces) => {
     responces
