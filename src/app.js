@@ -7,22 +7,22 @@ import i18next from 'i18next';
 import render from './view.js';
 import parse from './parser.js';
 import ru from './text/ru';
+import _ from 'lodash';
 
 const schema = (urls) => yup.string().url().notOneOf(urls);
 
 yup.setLocale({
   mixed: {
     notOneOf: 'existsAllready',
-    requried: 'emptyInput',
   },
   string: {
     url: 'notValidUrl',
   },
 });
 
-const makeRequest = (url) => {
-  const url1 = new URL(url);
-  const link = `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url1)}`;
+const makeRequest = (text) => {
+  const url = new URL(text);
+  const link = `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`;
   return axios.get(link);
 };
 
@@ -33,9 +33,10 @@ const updatePosts = (changedState) => {
     responces
       .filter((responce) => responce.status === 'fulfilled')
       .forEach((responce) => {
-        const { posts } = parse(responce.value.data.contents);
+        const { feed, posts } = parse(responce.value.data.contents);
         const postsLinks = changedState.posts.map((post) => post.link);
-        const newPosts = posts.filter(({ link }) => !postsLinks.includes(link));
+        const newPosts = posts.filter(({ link }) => !postsLinks.includes(link))
+        .map(post => ({ ...post, feedId: feed.id, postId: _.uniqueId() }));
         changedState.posts.push(...newPosts);
       });
   })
@@ -70,22 +71,23 @@ export default (state) => {
         .validate(url)
         .then(() => {
           watchedState.error = '';
+          return makeRequest(url)
         })
-        .then(() => makeRequest(url))
         .then((response) => {
           if (response.status >= 200 && response.status < 300) {
             watchedState.urls.push(url);
             const data = parse(response.data.contents);
             const { feed, posts } = data;
+            feed.id = _.uniqueId();
+            const postsWithId = posts.map(post => ({ ...post, feedId: feed.id, postId: _.uniqueId() }));
             watchedState.feeds.unshift(feed);
-            watchedState.posts.push(...posts);
+            watchedState.posts.push(...postsWithId);
             watchedState.formState = 'successed';
             return;
           }
           throw new Error('Network Error');
         })
         .catch((error) => {
-          console.log('e.message!!!!', error);
           watchedState.error = error.message;
           watchedState.formState = 'error';
         });

@@ -20,8 +20,6 @@ export default (object) => {
     link: item.querySelector('link').textContent,
     title: item.querySelector('title').textContent,
     description: item.querySelector('description').textContent,
-    feedId: feed.id,
-    postId: _.uniqueId(),
   }));
 
   return { feed, posts };

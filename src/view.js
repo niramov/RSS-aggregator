@@ -130,10 +130,7 @@ const renderErrors = (elements, value, i18n) => {
 
 const renderReadedPosts = (watchedState, value) => {
   value.forEach((targetId) => {
-    const targetPost = watchedState.posts.find(({ postId }) => postId === targetId);
-    console.log('targetPost', targetPost);
     const targetElement = document.querySelector(`[data-post-id="${targetId}"]`);
-    console.log('element', targetElement);
     targetElement.classList.remove('fw-bold');
     targetElement.classList.add('fw-normal');
   });
