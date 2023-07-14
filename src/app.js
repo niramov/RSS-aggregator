@@ -21,7 +21,8 @@ yup.setLocale({
 });
 
 const makeRequest = (url) => {
-  const link = `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`;
+  const url1 = new URL(url);
+  const link = `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url1)}`;
   return axios.get(link);
 };
 
