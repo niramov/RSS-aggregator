@@ -21,13 +21,13 @@ yup.setLocale({
 });
 
 const makeRequest = (text) => {
-  const url = new URL(text);
+  const url = new URL(text).href;
   const link = `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(url)}`;
   return axios.get(link);
 };
 
 const updatePosts = (changedState) => {
-  const promises = changedState.urls.map((url) => makeRequest(new URL(url)));
+  const promises = changedState.urls.map((url) => makeRequest(url));
   const promise = Promise.allSettled(promises);
   promise.then((responces) => {
     responces
