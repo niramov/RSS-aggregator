@@ -124,11 +124,12 @@ const renderErrors = (elements, value, i18n) => {
     case '':
       break;
     default:
-      throw new Error('Unknown value!', value);
+      throw new Error('Unknown value!', value.message);
   }
 };
 
-const renderReadedPosts = (watchedState, value) => {
+const renderReadedPosts = (value) => {
+  console.log('value', value);
   value.forEach((targetId) => {
     const targetElement = document.querySelector(`[data-post-id="${targetId}"]`);
     targetElement.classList.remove('fw-bold');
@@ -161,7 +162,7 @@ export default (watchedState, elements, i18n) => (path, value) => {
       renderPosts(watchedState, value, elements);
       break;
     case 'stateUI.readedPosts':
-      renderReadedPosts(watchedState, value);
+      renderReadedPosts(value);
       break;
     case 'stateUI.modal':
       renderModal(watchedState, value, elements);
