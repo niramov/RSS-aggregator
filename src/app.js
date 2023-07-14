@@ -75,8 +75,8 @@ export default (state) => {
         })
         .then((response) => {
           if (response.status >= 200 && response.status < 300) {
-            watchedState.urls.push(url);
             const data = parse(response.data.contents);
+            watchedState.urls.push(url);
             const { feed, posts } = data;
             feed.id = _.uniqueId();
             const postsWithId = posts.map(post => ({ ...post, feedId: feed.id, postId: _.uniqueId() }));
