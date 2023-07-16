@@ -4,10 +4,10 @@ import axios from 'axios';
 import * as yup from 'yup';
 import onChange from 'on-change';
 import i18next from 'i18next';
+import _ from 'lodash';
 import render from './view.js';
 import parse from './parser.js';
 import ru from './text/ru';
-import _ from 'lodash';
 
 const schema = (urls) => yup.string().url().notOneOf(urls);
 
@@ -38,7 +38,9 @@ const updatePosts = (changedState) => {
         const { feed, posts } = parse(responce.value.data.contents);
         const postsLinks = changedState.posts.map((post) => post.link);
         const newPosts = posts.filter(({ link }) => !postsLinks.includes(link))
-        .map(post => ({ ...post, feedId: feed.id, postId: _.uniqueId() }));
+          .map((post) => ({
+            ...post, feedId: feed.id, postId: _.uniqueId(),
+          }));
         changedState.posts.push(...newPosts);
       });
   })
@@ -73,7 +75,7 @@ export default (state) => {
         .validate(url)
         .then(() => {
           watchedState.error = '';
-          return makeRequest(url)
+          return makeRequest(url);
         })
         .then((response) => {
           if (response.status >= 200 && response.status < 300) {
@@ -81,7 +83,9 @@ export default (state) => {
             watchedState.urls.push(url);
             const { feed, posts } = data;
             feed.id = _.uniqueId();
-            const postsWithId = posts.map(post => ({ ...post, feedId: feed.id, postId: _.uniqueId() }));
+            const postsWithId = posts.map((post) => ({
+              ...post, feedId: feed.id, postId: _.uniqueId(),
+            }));
             watchedState.feeds.unshift(feed);
             watchedState.posts.push(...postsWithId);
             watchedState.formState = 'successed';
