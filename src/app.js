@@ -24,8 +24,7 @@ const makeRequest = (url) => {
   const link = new URL('https://allorigins.hexlet.app/get');
   link.searchParams.set('disableCache', 'true');
   link.searchParams.set('url', `${url}`);
-  // const link = `https://allorigins.hexlet.app/get?disableCache=true&url=${encodeURIComponent(new URL(url).toString())}`;
-  return axios.get(link.toString());
+  return axios.get(link);
 };
 
 const updatePosts = (changedState) => {
