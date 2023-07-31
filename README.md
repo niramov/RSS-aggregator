@@ -5,6 +5,8 @@
 
 [RSS Reader](https://frontend-project-11-niramov.vercel.app/)
 
+<img allign="center" width="650" heigh="286" alt="Снимок экрана 2023-07-31 в 11 10 11" src="https://github.com/niramov/RSS-aggregator/assets/67758320/cf9aa70b-b30d-42c4-a80e-8965e71591e4">
+
 **Description**:
 RSS aggregator with automatically posts updating.
 
